@@ -1,4 +1,4 @@
-echo 0 > /proc/sys/vm/overcommit_memory
+### Planejamento da implementação
 
 - Implementações da operação PRODUTO MATRIZ-VETOR: $$I = \{i_{C,1}, i_{C,2}, i_{Fortran,1}, i_{Fortran,2}\}$$
     - *Entrada:* Matriz $$A_{n \times n}$$, Vetor $$x_{n \times 1}$$
