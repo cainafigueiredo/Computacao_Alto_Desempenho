@@ -1,0 +1,18 @@
+Seja A uma matriz N x M
+Seja B uma matriz M x K
+
+Seja C uma matriz N x K
+
+% Produto escalar entre dois vetores
+Função: produtoEscalar
+	Entrada: a, b, d // vetores 'a' e 'b', ambos com dimensão 'd'
+	Saída: res // número real resultante do produto escalar entre os vetores 'a' e 'b'
+	
+	s = 0;
+	Para i = 1 até d faça
+		s += a[i] * b[i]
+
+% Calculando os elementos de C a partir da multiplicação das matrizes A e B
+Para i = 1 até N faça
+	Para j = 1 até K faça
+		C[i][j] = produtoEscalar(A[i], B[:,j])
