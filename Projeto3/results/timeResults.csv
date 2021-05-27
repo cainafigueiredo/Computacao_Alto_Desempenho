@@ -1,0 +1,11 @@
+version,numberOfThreads,nx=512,nx=1024,nx=2048
+serial,1,20.179,31.863,131.181
+vetorização,1,12.965,20.354,91.019
+paralelismo,1,10.044,31.506,131.314
+paralelismo,2,4.058,16.232,73.445
+paralelismo,3,4.625,18.471,83.094
+paralelismo,4,4.827,18.992,71.116
+paralelismo+vetorização,1,5.741,22.242,94.485
+paralelismo+vetorização,2,4.058,11.470,51.420
+paralelismo+vetorização,3,2.377,9.316,42.316
+paralelismo+vetorização,4,2.696,7.682,33.254

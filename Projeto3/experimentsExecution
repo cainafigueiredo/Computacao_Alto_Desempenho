@@ -1,0 +1,39 @@
+echo "Preparing directories..."
+rm -r bin
+rm -r results
+mkdir bin
+mkdir results
+
+echo "Compiling laplace versions..."
+g++ ./src/laplace_serial.cxx -o ./bin/laplace_serial
+g++ -O3 ./src/laplace_serial.cxx -o ./bin/laplace_serial_O3
+g++ -fopenmp ./src/laplace_OMP.cxx -o ./bin/laplace_OMP
+g++ -fopenmp -O3 ./src/laplace_OMP.cxx -o ./bin/laplace_OMP_O3
+
+echo "Running all combinations..."
+for parameters in "512 1000 1e-16" "1024 1000 1e-16" "2048 1000 1e-16"
+do
+	echo "Parameters: ${parameters}"
+	echo ${parameters} > parameters.txt
+
+	mkdir ./results/"${parameters}"
+
+	echo "Running laplace_serial"
+	./bin/laplace_serial < parameters.txt > ./results/"${parameters}"/laplace_serial.txt
+	
+	echo "Running laplace_serial_O3"
+	./bin/laplace_serial_O3 < parameters.txt > ./results/"${parameters}"/laplace_serial_O3.txt
+
+	for numThreads in 1 2 3 4
+	do
+		export OMP_NUM_THREADS=${numThreads}
+		
+		echo "Running laplace_OMP_T${numThreads}"
+		./bin/laplace_OMP < parameters.txt > ./results/"${parameters}"/laplace_OMP_T${numThreads}.txt
+	
+		echo "Running laplace_OMP_O3_T${numThreads}"
+		./bin/laplace_OMP_O3 < parameters.txt > ./results/"${parameters}"/laplace_OMP_O3_T${numThreads}.txt
+	done
+done
+
+echo "All done!"

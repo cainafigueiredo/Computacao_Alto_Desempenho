@@ -1,8 +1,3 @@
-/* 
-    This code is that improved code in Project 2. It contains some improvements in comparison
-    to laplace original version.
-*/
-
 /* A pure C/C++ version of a Gauss-Siedel Laplacian solver to test the
    speed of a C program versus that of doing it with
    Python/Numeric/Weave. */
@@ -10,6 +5,7 @@
 #include <iostream>
 #include <cmath>
 #include <time.h>
+#include <omp.h>
 
 typedef double Real;
 
@@ -120,19 +116,19 @@ Real LaplaceSolver :: timeStep(const Real dt)
     Real dy2 = g->dy*g->dy;
     Real tmp;
     Real err = 0.0;
-    Real cte = (0.5)/(dx2 + dy2);
-    Real valueToSquare;
     int nx = g->nx;
     int ny = g->ny;
+    int i,j;
     Real **u = g->u;
 
-    for (int i=1; i<nx-1; ++i) {
-        for (int j=1; j<ny-1; ++j) {
+    #pragma omp parallel for shared(u) private(i) reduction(+:err)
+    for (i=1; i<nx-1; ++i) {
+        #pragma omp parallel for shared(u) private(j,tmp) reduction(+:err)
+        for (j=1; j<ny-1; ++j) {
             tmp = u[i][j];
             u[i][j] = ((u[i-1][j] + u[i+1][j])*dy2 +
-                       (u[i][j-1] + u[i][j+1])*dx2)*cte;
-	    valueToSquare = u[i][j] - tmp; 
-            err += valueToSquare * valueToSquare;            
+                       (u[i][j-1] + u[i][j+1])*dx2)*0.5/(dx2 + dy2);
+            err += SQR(u[i][j] - tmp);            
         }
     }
     return sqrt(err);
@@ -169,10 +165,12 @@ int main(int argc, char * argv[])
     std::cout <<"nx = " << g->nx << ", ny = " << g->ny 
               << ", n_iter = " << n_iter << ", eps = "<<eps <<std::endl;
 
-    t_start = seconds();
+    //t_start = seconds();
+    t_start = omp_get_wtime();
     std::cout << s.solve(n_iter, eps) << std::endl;
-    t_end = seconds();
-    std::cout << "Iterations took " << t_end - t_start << " seconds.\n";    
+    t_end = omp_get_wtime();
+    //t_end = seconds();
+    std::cout << "Iterations took " << t_end - t_start << " seconds.\n";  
     
     return 0;
 }
